@@ -22,3 +22,5 @@ demo
 
 https://github.com/user-attachments/assets/3329070e-7d98-40f3-91ba-2026fa51ef22
 
+candidate level no responce view 
+![browser_GkIZ6Ma52E](https://github.com/user-attachments/assets/39cfe23b-85e3-4bd5-a302-1107d04a835f)
