@@ -1,11 +1,14 @@
 "use client";
 
 import { Form, FormikProvider, useFormik } from "formik";
+import Cookies from "js-cookie";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { FC, ReactNode } from "react";
-import * as Yup from "yup";
+import { toast } from "react-hot-toast";
 
+import { candidatesApi } from "@/api/candidates";
+import { RESPONSE_STATUS } from "@/api/types";
 import Button from "@/components/Button";
 import FormLabelWrapper from "@/components/FormLabelWrapper";
 import { Option } from "@/components/Select/utils";
@@ -13,40 +16,16 @@ import { ShimmerBlock } from "@/components/Shimmer";
 import TextArea from "@/components/TextArea";
 import TextInput from "@/components/TextInput";
 
+import { FormValue, INITIAL_VALUES, VALIDATION_SCHEMA } from "./utils";
+
 const Select = dynamic(() => import("@/components/Select/Select"), {
   ssr: false,
   loading: () => <ShimmerBlock className="w-full h-[48px] pl-2" />,
 });
 
-const VALIDATION_SCHEMA = Yup.object().shape({
-  name: Yup.string().required("Required"),
-  email: Yup.string().email("Invalid email").required("Required"),
-  assignment_description: Yup.string().required("Required"),
-  github_repo_url: Yup.string()
-    .url("Please enter a valid URL (e.g. https://example.com)")
-    .required("Required"),
-  candidate_level: Yup.object().required("Required"),
-});
-
-const INITIAL_VALUES = {
-  name: "",
-  email: "",
-  assignment_description: "",
-  github_repo_url: "",
-  candidate_level: undefined,
-};
-
 interface Props {
   levelOptions: Option[];
   formLabel: ReactNode;
-}
-
-interface FormValue {
-  name: string;
-  email: string;
-  assignment_description: string;
-  github_repo_url: string;
-  candidate_level: Option[];
 }
 
 const FormComponent: FC<Props> = ({ levelOptions, formLabel }) => {
@@ -56,8 +35,35 @@ const FormComponent: FC<Props> = ({ levelOptions, formLabel }) => {
     initialValues: INITIAL_VALUES,
     validationSchema: VALIDATION_SCHEMA,
     onSubmit: (values: FormValue) => {
-      console.log(values);
-      //router.push("/thank-you");
+      candidatesApi
+        .sendAssignment({
+          ...values,
+          candidate_level: values.candidate_level.value,
+        })
+        .then(({ status, errors, message }) => {
+          if (status === RESPONSE_STATUS.SUCCESS) {
+            toast.success(message);
+
+            Cookies.set(
+              "USER_INFO",
+              JSON.stringify({
+                name: values.name,
+                email: values.email,
+                level: values.candidate_level.value,
+              }),
+              {
+                expires: 1,
+                path: "/thank-you",
+              },
+            );
+
+            router.push("/thank-you");
+          } else if (errors?.length) {
+            errors.forEach((error) => {
+              toast.error(error);
+            });
+          }
+        });
     },
   });
 

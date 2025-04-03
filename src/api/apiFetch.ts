@@ -28,5 +28,8 @@ export const apiFetch = async <T, K>(
   try {
     const res = await fetch(path, options);
     return await res.json();
-  } catch (e) {}
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error("api error", e);
+  }
 };

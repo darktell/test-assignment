@@ -29,7 +29,6 @@ const TextInput: FC<Props> = ({
   return (
     <div className={twMerge("w-full", containerClassName)}>
       <input
-        // id={id}
         type="text"
         className={cn(
           twMerge(
@@ -41,8 +40,9 @@ const TextInput: FC<Props> = ({
               showError,
           },
         )}
-        {...field}
         disabled={isDisabled}
+        {...props}
+        {...field}
       />
       {showError && <span className="text-sm text-red-500">{error}</span>}
     </div>
