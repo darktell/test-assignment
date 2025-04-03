@@ -17,3 +17,8 @@ bun dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 Deployed on vercel - https://test-assignment-omega.vercel.app
+
+demo
+
+https://github.com/user-attachments/assets/3329070e-7d98-40f3-91ba-2026fa51ef22
+
