@@ -4,7 +4,7 @@ import { Form, FormikProvider, useFormik } from "formik";
 import Cookies from "js-cookie";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { candidatesApi } from "@/api/candidates";
@@ -31,10 +31,14 @@ interface Props {
 const FormComponent: FC<Props> = ({ levelOptions, formLabel }) => {
   const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const formik = useFormik({
     initialValues: INITIAL_VALUES,
     validationSchema: VALIDATION_SCHEMA,
     onSubmit: (values: FormValue) => {
+      setIsLoading(true);
+
       candidatesApi
         .sendAssignment({
           ...values,
@@ -63,6 +67,9 @@ const FormComponent: FC<Props> = ({ levelOptions, formLabel }) => {
               toast.error(error);
             });
           }
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     },
   });
@@ -100,6 +107,7 @@ const FormComponent: FC<Props> = ({ levelOptions, formLabel }) => {
           <Button
             className="w-full md:w-auto md:mx-auto block md:mt-6 mt-4"
             type="submit"
+            disabled={isLoading}
           >
             Submit Assigment
           </Button>
