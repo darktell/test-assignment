@@ -66,6 +66,8 @@ const FormComponent: FC<Props> = ({ levelOptions, formLabel }) => {
             errors.forEach((error) => {
               toast.error(error);
             });
+          } else if (status === RESPONSE_STATUS.ERROR) {
+            toast.error(message);
           }
         })
         .finally(() => {
